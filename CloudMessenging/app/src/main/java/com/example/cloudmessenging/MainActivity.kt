@@ -1,6 +1,8 @@
 package com.example.cloudmessenging
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cloudmessenging.ui.theme.CloudMessengingTheme
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.iid.FirebaseInstanceIdReceiver
+import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,16 +30,30 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
-                    val analytics : FirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-                    val bundle = Bundle()
-                    bundle.putString("message", "add firebase complete")
-                    analytics.logEvent("InitScreen", bundle)
+                    notification()
                 }
             }
         }
     }
 }
+
+
+private fun notification(){
+    FirebaseMessaging.getInstance().token
+        .addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Obtén el token de registro
+            val token = task.result
+
+            // Haz lo que necesites con el token aquí, como enviarlo a tu servidor
+            Log.d(TAG, "Token: $token")
+        })
+}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
