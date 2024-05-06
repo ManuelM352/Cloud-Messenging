@@ -45,14 +45,13 @@ private fun notification(){
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
-
-            // Obtén el token de registro
+            // Token de registro
             val token = task.result
-
-            // Haz lo que necesites con el token aquí, como enviarlo a tu servidor
             Log.d(TAG, "Token: $token")
         })
 }
+
+
 
 
 @Composable
